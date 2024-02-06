@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoomGuard</title>
+    <link href="/vendor/bootstrap.min.css" rel="stylesheet" >
+    <link href="/styles/boomguard.css" rel="stylesheet" >
+</head>
+<body>
+    <nav class="navbar bg-dark border-bottom border-body sticky-top" data-bs-theme="dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">BoomGuard</a>
+        </div>
+    </nav>
+      
+    <main>
+        <section id="header-banner" class="py-5 text-center container">
+            <div class="row py-lg-5">
+                <!-- <div class="col-lg-6 col-md-8 mx-auto">
+                    <h1 class="fw-light">BoomGuard</h1>
+                    <p class="lead text-body-secondary">A mine discovery game with addons.</p>
+                </div> -->
+            </div>
+        </section>
+        
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div id="game-container"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/vendor/pixi.js"></script>
+    <script src="/vendor/pixi.particles.min.js"></script>
+    <script src="/vendor/pixi.emitter.min.js"></script>
+    <script src="/particles/explosion-emitter.js"></script>
+    <script src="/scripts/explosionHelper.js"></script>
+    <script src="/scripts/mapHelper.js"></script>
+    <script src="/scripts/labelHelper.js"></script>
+    <script src="/scripts/game.js"></script>
+    <script src="/scripts/gameTile.js"></script>
+    <script src="/scripts/gameStage.js"></script>
+    <script src="/scripts/boomguard.js"></script>
+</body>
+</html>
