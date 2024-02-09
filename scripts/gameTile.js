@@ -5,6 +5,7 @@ var gameTile = function(mapTile, config) {
     let tileSourceSize = 172;
     let isBatchMarked = false;
     let isDisabled = false;
+    let isRevealed = false;
 
     function createSprite(assetName) {
         if (sprite !== null) {
@@ -62,9 +63,21 @@ var gameTile = function(mapTile, config) {
         }
     }
 
-    mapTile.markTile = function() {
-        skullSprite.visible = true;
-        isDisabled = true;
+    mapTile.isTileRevealed = function() {
+        return isRevealed;
+    }
+
+    mapTile.toggleTileMarking = function() {
+        if (!isRevealed) {
+            if (isDisabled) {
+                skullSprite.visible = false;
+                isDisabled = false;
+            }
+            else {
+                skullSprite.visible = true;
+                isDisabled = true;
+            }
+        }
     }
 
     mapTile.highlightTile = function(batch) {
@@ -88,7 +101,7 @@ var gameTile = function(mapTile, config) {
     }
 
     mapTile.reveal = function(skipEvent) {
-        if (!isDisabled) {
+        if (!isDisabled && !isRevealed) {
             isBatchMarked = false;
 
             createSprite(config.assetRegister['empty']);
@@ -99,6 +112,7 @@ var gameTile = function(mapTile, config) {
             }
 
             isDisabled = true;
+            isRevealed = true;
         }
     }
 

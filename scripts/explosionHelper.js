@@ -19,6 +19,7 @@ var explosionHelper = function() {
             }
         });
 
+        soundHelper.play(soundHelper.soundKey.Explosion);
         emitter.playOnceAndDestroy();
     }
 

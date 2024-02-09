@@ -5,6 +5,7 @@ var gameStage = function() {
     async function initialize(app) {
         appInstance = app;
         explosionHelper.initialize(appInstance);
+        soundHelper.initialize();
 
         assetTileList = ['desert1', 'desert2', 'desert3', 'desert4', 'empty', 'skull'];
 
@@ -61,8 +62,12 @@ var gameStage = function() {
 
     function handleTileMouseUp(mapTile, mouseEvent) {
         if (mouseEvent.data.button === 0) {
-            mapTile.reveal(); 
-            handleTileReveal(mapTile);
+            if (!mapTile.isTileRevealed()) {
+                soundHelper.play(soundHelper.soundKey.Interaction);
+
+                mapTile.reveal(); 
+                handleTileReveal(mapTile);
+            }
         }
         else if (mouseEvent.data.button === 1) {
             batchRevealTiles();
@@ -70,12 +75,13 @@ var gameStage = function() {
     }
 
     function handleTileRightClick(mapTile, mouseEvent) {
-        mapTile.markTile();
+        mapTile.toggleTileMarking();
     }
 
     function handleTileReveal(mapTile) {
         if (mapTile.tileType === 'bomb') {
             var tileCenter = mapTile.getTileCenter();
+            
             explosionHelper.playExplosion(tileCenter.xPos, tileCenter.yPos);
             console.log('game over');
         }
@@ -83,8 +89,15 @@ var gameStage = function() {
             var emptyFields = mapHelper.getAttachedTilesOfType('empty', mapTile.xPos, mapTile.yPos);
             var emptyAndNumberFields = mapHelper.extendByOne(emptyFields);
 
+            var revealedFields = 0;
             for (var tileKey in emptyAndNumberFields) {
                 emptyAndNumberFields[tileKey].reveal(true);
+
+                revealedFields++;
+            }
+
+            if (revealedFields) {
+                soundHelper.play(soundHelper.soundKey.Reveal);
             }
         }
     }
