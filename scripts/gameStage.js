@@ -6,6 +6,8 @@ var gameStage = function() {
         appInstance = app;
         explosionHelper.initialize(appInstance);
         soundHelper.initialize();
+        overlayHelper.initialize(appInstance);
+        interactionHelper.initialize(appInstance);
 
         assetTileList = ['desert1', 'desert2', 'desert3', 'desert4', 'empty', 'skull'];
 
@@ -83,7 +85,13 @@ var gameStage = function() {
             var tileCenter = mapTile.getTileCenter();
             
             explosionHelper.playExplosion(tileCenter.xPos, tileCenter.yPos);
-            console.log('game over');
+            overlayHelper.showOverlay({
+                text: 'Game Over',
+                blockBackground: true,
+                width: 200,
+                height: 80,
+                type: overlayHelper.overlayTypes.BigMessage
+            });
         }
         else if (mapTile.tileType === 'empty') {
             var emptyFields = mapHelper.getAttachedTilesOfType('empty', mapTile.xPos, mapTile.yPos);

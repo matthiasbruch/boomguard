@@ -47,7 +47,7 @@ var gameTile = function(mapTile, config) {
         if (label !== null) {
             var textElement = new PIXI.Text(
                 label,
-                labelHelper.getConfigForTileLabel(labelHelper.getColorForLabel(label))
+                labelHelper.getConfigForTileLabel(labelHelper.getColorForLabel(label), true)
             );
 
             textElement.x = config.tileWidthAndHeight / 2 - ((mapTile.tileType == 'bomb') ? 10 : 5);

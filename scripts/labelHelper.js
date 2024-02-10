@@ -31,17 +31,27 @@ var labelHelper = function() {
         return fillColor;
     }
 
-    function getConfigForTileLabel(fillColor) {
+    function getConfigForTileLabel(fillColor, addShadow) {
+        if (addShadow) {
+            return {
+                fontFamily: 'Arial',
+                fontSize: 16,
+                fontWeight: 600,
+                fill: fillColor,
+                dropShadow: true,
+                dropShadowColor: '#000000',
+                dropShadowBlur: 4,
+                dropShadowAngle: Math.PI / 6,
+                dropShadowDistance: 2,
+                align: 'center',
+            };
+        }
+
         return {
             fontFamily: 'Arial',
             fontSize: 16,
             fontWeight: 600,
             fill: fillColor,
-            dropShadow: true,
-            dropShadowColor: '#000000',
-            dropShadowBlur: 4,
-            dropShadowAngle: Math.PI / 6,
-            dropShadowDistance: 2,
             align: 'center',
         };
     }
