@@ -80,7 +80,7 @@ var gameStage = function() {
                 if (!mapTile.isTileRevealed()) {
                     soundHelper.play(soundHelper.soundKey.Interaction);
 
-                    mapTile.reveal(); 
+                    mapTile.reveal(gameTileRevalType.MouseUp); 
                     handleTileReveal(mapTile);
                 }
             }
@@ -115,7 +115,7 @@ var gameStage = function() {
 
             var revealedFields = 0;
             for (var tileKey in emptyAndNumberFields) {
-                emptyAndNumberFields[tileKey].reveal(true);
+                emptyAndNumberFields[tileKey].reveal(gameTileRevalType.CascadedEmptyOrNumber);
 
                 revealedFields++;
             }
@@ -137,7 +137,7 @@ var gameStage = function() {
 
     function batchRevealTiles() {
         for (var i = 0; i < lastBatch.length; i++) {
-            lastBatch[i].reveal();
+            lastBatch[i].reveal(gameTileRevalType.MouseUpBatch);
         }
     }
 

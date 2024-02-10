@@ -1,3 +1,11 @@
+var gameTileRevalType = {
+    CascadedEmptyOrNumber: 'cascadedEmptyOrNumber', // events
+    MouseUp: 'mouseUp', // events
+    MouseUpBatch: 'mouseUpBatch', // events
+    InteractionBombDrop: 'interactionBombDrop', // no-events
+    InteractionDigging: 'interactionDigging'
+}
+
 var gameTile = function(mapTile, config) {
     let container = null;
     let sprite = null;
@@ -126,21 +134,35 @@ var gameTile = function(mapTile, config) {
         }
     }
 
-    mapTile.reveal = function(skipEvent) {
+    mapTile.reveal = function(eventSource) {
         if (!isDisabled && !isRevealed) {
             isBatchMarked = false;
 
             createSprite(config.assetRegister['empty']);
             createLabel();
     
-            if (mapTile.tileType === 'bomb') {
-                statHelper.increaseStat(statHelper.statType.DetonatedBombs);
+            switch (eventSource) {
+                case gameTileRevalType.CascadedEmptyOrNumber:
+                    // Just automatic revealing of free fields. No action.
+                    break;
+                case gameTileRevalType.MouseUp:
+                case gameTileRevalType.MouseUpBatch:
+                    if (config.onReveal) {
+                        config.onReveal(mapTile);
+                    }
+                    break;
+                case gameTileRevalType.InteractionBombDrop:
+                    if (mapTile.tileType === 'bomb') {
+                        statHelper.increaseStat(statHelper.statType.DetonatedBombs);
+                    }
+                    break;
+                case gameTileRevalType.InteractionDigging:
+                    if (mapTile.tileType === 'bomb') {
+                        statHelper.increaseStat(statHelper.statType.DugOutBombs);
+                    }
+                    break;
             }
-
-            if (!skipEvent && config.onReveal) {
-                config.onReveal(mapTile); 
-            }
-
+            
             isDisabled = true;
             isRevealed = true;
         }

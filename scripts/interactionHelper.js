@@ -66,7 +66,7 @@ var interactionHelper = function() {
             var loopedTileCenter = loopedTile.getTileCenter();
 
             explosionHelper.playExplosion(loopedTileCenter.xPos, loopedTileCenter.yPos);
-            loopedTile.reveal(true);
+            loopedTile.reveal(gameTileRevalType.InteractionBombDrop);
         }
         
         cleanup();
@@ -114,11 +114,7 @@ var interactionHelper = function() {
         digTime = 0;
 
         if (mapTile) {
-            mapTile.reveal(true);
-
-            if (mapTile.tileType === 'bomb') {
-                statHelper.increaseStat(statHelper.statType.DugOutBombs);
-            }
+            mapTile.reveal(gameTileRevalType.InteractionDigging);
         }
 
         overlayHelper.hideOverlay();
