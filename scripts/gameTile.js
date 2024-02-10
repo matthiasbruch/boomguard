@@ -85,6 +85,7 @@ var gameTile = function(mapTile, config) {
     mapTile.toggleTileMarking = function() {
         if (!isRevealed) {
             if (isDisabled) {
+                statHelper.decreaseStat(statHelper.statType.MarkedBombs);
                 skullSprite.visible = false;
                 isDisabled = false;
             }
@@ -94,6 +95,7 @@ var gameTile = function(mapTile, config) {
                     textElement = null;
                 }
 
+                statHelper.increaseStat(statHelper.statType.MarkedBombs);
                 skullSprite.visible = true;
                 isDisabled = true;
             }
@@ -131,6 +133,10 @@ var gameTile = function(mapTile, config) {
             createSprite(config.assetRegister['empty']);
             createLabel();
     
+            if (mapTile.tileType === 'bomb') {
+                statHelper.increaseStat(statHelper.statType.DetonatedBombs);
+            }
+
             if (!skipEvent && config.onReveal) {
                 config.onReveal(mapTile); 
             }

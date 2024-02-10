@@ -56,8 +56,19 @@ var labelHelper = function() {
         };
     }
 
+    function getConfigForStats() {
+        return {
+            fontFamily: 'Arial',
+            fontSize: 24,
+            fontWeight: 600,
+            fill: 0xCCCCCC,
+            align: 'center',
+        };
+    }
+
     return {
         getColorForLabel: getColorForLabel,
-        getConfigForTileLabel: getConfigForTileLabel
+        getConfigForTileLabel: getConfigForTileLabel,
+        getConfigForStats: getConfigForStats
     }
 }();

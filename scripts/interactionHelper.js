@@ -6,7 +6,8 @@ var interactionHelper = function() {
     let progress = 0;
     let interactionTypes = {
         Digging: 'digging',
-        Scan: 'scan'
+        Scan: 'scan',
+        Drop: 'drop'
     }
     let diggingOverlayConfig = {
         text: 'Digging',
@@ -37,6 +38,9 @@ var interactionHelper = function() {
             case interactionTypes.Scan: 
                 startScanning();
                 break;
+            case interactionTypes.Drop: 
+                startDropping();
+                break;
             default:
                 cleanup();
                 break;
@@ -52,11 +56,29 @@ var interactionHelper = function() {
         selectedInteraction = interaction;
     }
 
+    function startDropping() {
+        statHelper.decreaseStat(statHelper.statType.Credits, 8);
+
+        var rowTiles = mapHelper.getRowTiles(mapTile.yPos);
+        
+        for (var i = 0; i < rowTiles.length; i++) {
+            var loopedTile = rowTiles[i];
+            var loopedTileCenter = loopedTile.getTileCenter();
+
+            explosionHelper.playExplosion(loopedTileCenter.xPos, loopedTileCenter.yPos);
+            loopedTile.reveal(true);
+        }
+        
+        cleanup();
+    }
+
     function getNextMode() {
         return selectedInteraction;
     }
 
     function startScanning() {
+        statHelper.decreaseStat(statHelper.statType.Credits, 2);
+
         var batchToScan = mapHelper.getBatchTiles(mapTile.xPos, mapTile.yPos);
 
         for (var i = 0; i < batchToScan.length; i++) {
@@ -93,6 +115,10 @@ var interactionHelper = function() {
 
         if (mapTile) {
             mapTile.reveal(true);
+
+            if (mapTile.tileType === 'bomb') {
+                statHelper.increaseStat(statHelper.statType.DugOutBombs);
+            }
         }
 
         overlayHelper.hideOverlay();

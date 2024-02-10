@@ -1,6 +1,7 @@
 var gameStage = function() {
     let appInstance = null;
     let assetTileList = null;
+    var numberOfBombs = 99;
     
     async function initialize(app) {
         appInstance = app;
@@ -8,6 +9,12 @@ var gameStage = function() {
         soundHelper.initialize();
         overlayHelper.initialize(appInstance);
         interactionHelper.initialize(appInstance);
+        statHelper.initialize(appInstance, {
+            numberOfBombs: numberOfBombs,
+            statUpdate: function(stats) {
+                interactionMenuHelper.handleStatUpdate(stats)
+            }
+        });
         await interactionMenuHelper.initialize(appInstance);
 
         assetTileList = ['desert1', 'desert2', 'desert3', 'desert4', 'empty', 'skull'];
@@ -29,9 +36,8 @@ var gameStage = function() {
         var tileWidthAndHeight = Math.floor(800 / NUMBER_OF_COLUMNS);
         var offsetX = 10;
         var offsetY = 60;
-        var numberOfBombs = 99;
 
-        map = mapHelper.generateMap(NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, numberOfBombs);
+        map = mapHelper.generateMap(NUMBER_OF_COLUMNS, NUMBER_OF_ROWS, statHelper.getNumber(statHelper.statType.TotalBombs));
 
         for (var x = 0; x < NUMBER_OF_COLUMNS; x++) {
             for (var y = 0; y < NUMBER_OF_ROWS; y++) {
@@ -85,6 +91,8 @@ var gameStage = function() {
     }
 
     function handleTileRightClick(mapTile, mouseEvent) {
+        interactionHelper.setNextMode(null);
+
         mapTile.toggleTileMarking();
     }
 

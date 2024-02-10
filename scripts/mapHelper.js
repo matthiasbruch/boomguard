@@ -1,12 +1,18 @@
 var mapHelper = function() {
 
     let map = null;
+    let config = {
+        rows: 0,
+        columns: 0
+    }
 
     function generateMap(columns, rows, requiredBombs) {
         map = {};
+        config.rows = rows;
+        config.columns = columns;
 
-        generateBombMap(columns, rows, requiredBombs);
-        initializeNonBombFields(columns, rows);
+        generateBombMap(config.columns, config.rows, requiredBombs);
+        initializeNonBombFields(config.columns, config.rows);
 
         return map;
     }
@@ -26,9 +32,9 @@ var mapHelper = function() {
                     xPos: x,
                     yPos: y
                 }
-            }
 
-            bombCount++;
+                bombCount++;
+            }
         }
     }
 
@@ -75,6 +81,16 @@ var mapHelper = function() {
         addTileIfExists(tileList, x - 1, y + 1);
         addTileIfExists(tileList, x    , y + 1);
         addTileIfExists(tileList, x + 1, y + 1);
+
+        return tileList;
+    }
+
+    function getRowTiles(yPos) {
+        var tileList = [];
+
+        for (var x = 0; x < config.columns; x++) {
+            addTileIfExists(tileList, x, yPos);
+        }
 
         return tileList;
     }
@@ -158,6 +174,7 @@ var mapHelper = function() {
         generateMap: generateMap,
         getBatchTiles: getBatchTiles,
         getAttachedTilesOfType: getAttachedTilesOfType,
-        extendByOne: extendByOne
+        extendByOne: extendByOne,
+        getRowTiles: getRowTiles
     }
 }();
