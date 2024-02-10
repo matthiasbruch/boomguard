@@ -49,7 +49,7 @@ var gameStage = function() {
                     onReveal: handleTileReveal
                 });
 
-                map[tileKey].sprite.children[0].tint = (map[tileKey].tileType == 'empty') ? '#FF0000': '#FFFFFF';
+                // map[tileKey].sprite.children[0].tint = (map[tileKey].tileType == 'empty') ? '#FF0000': '#FFFFFF';
 
                 appInstance.stage.addChild(map[tileKey].sprite);
             }
