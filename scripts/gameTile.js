@@ -6,6 +6,7 @@ var gameTile = function(mapTile, config) {
     let isBatchMarked = false;
     let isDisabled = false;
     let isRevealed = false;
+    let textElement = null;
 
     function createSprite(assetName) {
         if (sprite !== null) {
@@ -36,7 +37,12 @@ var gameTile = function(mapTile, config) {
     }
 
     function createLabel() {
-        var label = null;
+        if (textElement) {
+            textElement.destroy();
+            textElement = null;
+        }
+        
+        let label = null;
         if (mapTile.tileType == 'number') {
             label = mapTile.bombCount + '';
         }
@@ -45,21 +51,30 @@ var gameTile = function(mapTile, config) {
         }
 
         if (label !== null) {
-            var textElement = new PIXI.Text(
+            textElement = new PIXI.Text(
                 label,
                 labelHelper.getConfigForTileLabel(labelHelper.getColorForLabel(label), true)
             );
 
             textElement.x = config.tileWidthAndHeight / 2 - ((mapTile.tileType == 'bomb') ? 10 : 5);
             textElement.y = config.tileWidthAndHeight / 2 - 10;
-            
+
             container.addChild(textElement);
         }
     }
 
     function bindEvent(eventName, callback) {
         if (callback) {
-            container.on(eventName, (mouseEvent) => { callback(mapTile, mouseEvent); });
+            container.on(eventName, (mouseEvent) => { 
+                container.cursor = 'pointer';
+                callback(mapTile, mouseEvent); 
+            });
+        }
+    }
+
+    mapTile.showHidden = function() {
+        if (!textElement) {
+            createLabel();
         }
     }
 
@@ -74,6 +89,11 @@ var gameTile = function(mapTile, config) {
                 isDisabled = false;
             }
             else {
+                if (textElement) {
+                    textElement.destroy();
+                    textElement = null;
+                }
+
                 skullSprite.visible = true;
                 isDisabled = true;
             }
@@ -81,6 +101,8 @@ var gameTile = function(mapTile, config) {
     }
 
     mapTile.highlightTile = function(batch) {
+        container.cursor = interactionHelper.getNextMode() || 'pointer';
+
         if (!isDisabled || !batch) {
             if (batch) {
                 isBatchMarked = true;
@@ -91,6 +113,8 @@ var gameTile = function(mapTile, config) {
     }
 
     mapTile.unlightTile = function(batch) {
+        container.cursor = 'pointer';
+
         if (batch) {
             isBatchMarked = false;
         }
@@ -125,6 +149,7 @@ var gameTile = function(mapTile, config) {
 
     container = new PIXI.Container();
     container.eventMode = 'static';
+    container.cursor = 'pointer';
     container.x = mapTile.xPos * config.tileWidthAndHeight + config.offsetX;
     container.y = mapTile.yPos * config.tileWidthAndHeight + config.offsetY;
 

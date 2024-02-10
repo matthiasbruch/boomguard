@@ -8,6 +8,7 @@ var gameStage = function() {
         soundHelper.initialize();
         overlayHelper.initialize(appInstance);
         interactionHelper.initialize(appInstance);
+        await interactionMenuHelper.initialize(appInstance);
 
         assetTileList = ['desert1', 'desert2', 'desert3', 'desert4', 'empty', 'skull'];
 
@@ -64,11 +65,18 @@ var gameStage = function() {
 
     function handleTileMouseUp(mapTile, mouseEvent) {
         if (mouseEvent.data.button === 0) {
-            if (!mapTile.isTileRevealed()) {
-                soundHelper.play(soundHelper.soundKey.Interaction);
+            var nextMode = interactionHelper.getNextMode();
 
-                mapTile.reveal(); 
-                handleTileReveal(mapTile);
+            if (nextMode) {
+                interactionHelper.interact(mapTile);
+            }
+            else {
+                if (!mapTile.isTileRevealed()) {
+                    soundHelper.play(soundHelper.soundKey.Interaction);
+
+                    mapTile.reveal(); 
+                    handleTileReveal(mapTile);
+                }
             }
         }
         else if (mouseEvent.data.button === 1) {

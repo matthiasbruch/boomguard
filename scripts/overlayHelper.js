@@ -12,7 +12,8 @@ var overlayHelper = function() {
         Background: 'background',
         DiggingDialog: 'diggingDialog',
         ProgressContainer: 'progressContainer',
-        ProgressBar: 'progressBar'
+        ProgressBar: 'progressBar',
+        BigMessage: 'bigmessage'
     };
 
     function initialize(app) {
@@ -37,7 +38,7 @@ var overlayHelper = function() {
 
             elementLookup[key] = container;
             container.addChild(sprite);
-            
+
             if (rectangleConfig.parent) {
                 rectangleConfig.parent.addChild(container);
             }
@@ -132,24 +133,32 @@ var overlayHelper = function() {
         var dialogWidth = overlayConfig.width;
         var dialogHeight = overlayConfig.height;
 
-        diggingDialog = createOrGetRectangle(wellKnownElements.DiggingDialog, {
-            x: dialogLeft,
-            y: dialogTop,
-            width: dialogWidth,
-            height: dialogHeight,
-            tint: 0x333333
-        });
+        var bigMessageDialog = elementLookup[wellKnownElements.BigMessage];
+        if (bigMessageDialog) {
+            bigMessageDialog.alpha = 1;
+            // bigMessageDialog.eventMode = 'static';
+        }
+        else
+        {
+            bigMessageDialog = createOrGetRectangle(wellKnownElements.BigMessage, {
+                x: dialogLeft,
+                y: dialogTop,
+                width: dialogWidth,
+                height: dialogHeight,
+                tint: 0x333333
+            });
 
-        var textConfig = labelHelper.getConfigForTileLabel(0xFFFFFF);
-        textConfig.fontSize = 24;
+            var textConfig = labelHelper.getConfigForTileLabel(0xFFFFFF);
+            textConfig.fontSize = 24;
 
-        var textElement = new PIXI.Text(
-            overlayConfig.text,
-            textConfig
-        );
-        textElement.x = 35;
-        textElement.y = 25;
-        diggingDialog.addChild(textElement);
+            var textElement = new PIXI.Text(
+                overlayConfig.text,
+                textConfig
+            );
+            textElement.x = 35;
+            textElement.y = 25;
+            bigMessageDialog.addChild(textElement);
+        }
     }
 
     function showOverlay(overlayConfig) {
@@ -157,11 +166,11 @@ var overlayHelper = function() {
             createOrGetBackground();
         }
 
-        switch (overlayConfig.type) { 
-            case overlayHelper.overlayTypes.Progress: 
+        switch (overlayConfig.type) {
+            case overlayHelper.overlayTypes.Progress:
                 createProgressDialog(overlayConfig);
                 break;
-            case overlayHelper.overlayTypes.BigMessage: 
+            case overlayHelper.overlayTypes.BigMessage:
                 bigMessage(overlayConfig);
                 break;
         }
@@ -173,11 +182,17 @@ var overlayHelper = function() {
             background.alpha = 0;
             background.eventMode = 'none';
         }
-        
+
         var diggingDialog = elementLookup[wellKnownElements.DiggingDialog];
         if (diggingDialog) {
             diggingDialog.alpha = 0;
             diggingDialog.eventMode = 'none';
+        }
+
+        var bigMessageDialog = elementLookup[wellKnownElements.BigMessage];
+        if (bigMessageDialog) {
+            bigMessageDialog.alpha = 0;
+            bigMessageDialog.eventMode = 'none';
         }
     }
 
