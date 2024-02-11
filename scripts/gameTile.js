@@ -137,6 +137,9 @@ var gameTile = function(mapTile, config) {
     mapTile.reveal = function(eventSource) {
         if (!isDisabled && !isRevealed) {
             isBatchMarked = false;
+            
+            isDisabled = true;
+            isRevealed = true;
 
             createSprite(config.assetRegister['empty']);
             createLabel();
@@ -144,10 +147,12 @@ var gameTile = function(mapTile, config) {
             switch (eventSource) {
                 case gameTileRevalType.CascadedEmptyOrNumber:
                     // Just automatic revealing of free fields. No action.
+                    statHelper.increaseStat(statHelper.statType.EmptyRevealed);
                     break;
                 case gameTileRevalType.MouseUp:
                 case gameTileRevalType.MouseUpBatch:
                     if (config.onReveal) {
+                        statHelper.increaseStat(statHelper.statType.EmptyRevealed);
                         config.onReveal(mapTile);
                     }
                     break;
@@ -155,16 +160,19 @@ var gameTile = function(mapTile, config) {
                     if (mapTile.tileType === 'bomb') {
                         statHelper.increaseStat(statHelper.statType.DetonatedBombs);
                     }
+                    else {
+                        statHelper.increaseStat(statHelper.statType.EmptyRevealed);
+                    }
                     break;
                 case gameTileRevalType.InteractionDigging:
                     if (mapTile.tileType === 'bomb') {
                         statHelper.increaseStat(statHelper.statType.DugOutBombs);
                     }
+                    else {
+                        statHelper.increaseStat(statHelper.statType.EmptyRevealed);
+                    }
                     break;
             }
-            
-            isDisabled = true;
-            isRevealed = true;
         }
     }
 

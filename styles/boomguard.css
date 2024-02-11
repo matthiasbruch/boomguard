@@ -3,10 +3,6 @@ body
     background-color: #3e4451;
 }
 
-main .container {
-    background-color: #000000;
-}
-
 #header-banner
 {
     background-image:url('../images/background/header-banner.jpg');

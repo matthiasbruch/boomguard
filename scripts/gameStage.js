@@ -67,6 +67,9 @@ var gameStage = function() {
         if (mouseEvent.data.button === 1) {
             batchHighlightTiles(mapTile);
         }
+
+        mouseEvent.stopPropagation();
+        mouseEvent.stopImmediatePropagation();
     }
 
     function handleTileMouseUp(mapTile, mouseEvent) {

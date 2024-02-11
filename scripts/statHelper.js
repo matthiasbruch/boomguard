@@ -3,20 +3,23 @@ var statHelper = function() {
     let ellapsedTimeLabel = null;
     let totalBombsLabel = null;
     let creditsLabel = null;
+    let revealedFieldsLabel = null;
     let startTime = new Date();
     var stats = {
         totalBombs: 0,
         markedBombs: 0,
         dugOutBombs: 0,
         detonatedBombs: 0,
-        credits: 0
+        credits: 0,
+        emptyRevealed: 0
     }
     var statType = {
         TotalBombs: 'totalBombs',
         MarkedBombs: 'markedBombs',
         DugOutBombs: 'dugOutBombs',
         DetonatedBombs: 'detonatedBombs',
-        Credits: 'credits'
+        Credits: 'credits',
+        EmptyRevealed: 'emptyRevealed',
     };
     let statUpdateCallback = null;
 
@@ -31,7 +34,16 @@ var statHelper = function() {
 
         showEllapsedTime();
         showTotalBombs();
+        // showRevealedFields();
         showCredits();
+    }
+
+    function getElapsedTime() {
+        var elapsedMS = new Date() - startTime;
+        var totalSeconds = Math.floor(elapsedMS / 1000);
+        var totalMinutes = Math.floor(totalSeconds / 60);
+        var secondsWithoutMinutes = totalSeconds - (totalMinutes * 60);
+        return (totalMinutes + '').padStart(2, '0') + ':' + (secondsWithoutMinutes + '').padStart(2, '0');
     }
 
     function showEllapsedTime() {
@@ -47,11 +59,7 @@ var statHelper = function() {
             appInstance.stage.addChild(ellapsedTimeLabel);
         }
         
-        var elapsedMS = new Date() - startTime;
-        var totalSeconds = Math.floor(elapsedMS / 1000);
-        var totalMinutes = Math.floor(totalSeconds / 60);
-        var secondsWithoutMinutes = totalSeconds - (totalMinutes * 60);
-        ellapsedTimeLabel.text = 'Time: ' + (totalMinutes + '').padStart(2, '0') + ':' + (secondsWithoutMinutes + '').padStart(2, '0');
+        ellapsedTimeLabel.text = 'Time: ' + getElapsedTime();
 
         window.setTimeout(showEllapsedTime, 1000);
     }
@@ -65,9 +73,29 @@ var statHelper = function() {
 
         showTotalBombs();
         showCredits();
+        // showRevealedFields();
 
         if (statUpdateCallback) {
             statUpdateCallback(stats);
+        }
+
+        checkWinCondition();
+    }
+
+    function checkWinCondition() {
+        var foundBombs = 
+            stats[statType.MarkedBombs] +
+            stats[statType.DugOutBombs] +
+            stats[statType.DetonatedBombs];
+
+        if (foundBombs === stats[statType.TotalBombs] && ((30*18) - stats.emptyRevealed) === stats[statType.TotalBombs]) {
+            overlayHelper.showOverlay({
+                text: 'WIN [' + getElapsedTime() + ']',
+                blockBackground: true,
+                width: 200,
+                height: 80,
+                type: overlayHelper.overlayTypes.BigMessage
+            });
         }
     }
 
@@ -92,7 +120,7 @@ var statHelper = function() {
                 labelHelper.getConfigForStats()
             );
 
-            totalBombsLabel.x = 210;
+            totalBombsLabel.x = 270;
             totalBombsLabel.y = 10;
 
             appInstance.stage.addChild(totalBombsLabel);
@@ -100,6 +128,22 @@ var statHelper = function() {
         
         totalBombsLabel.text = 'Bombs: ' + stats.markedBombs + ' (marked) | ' + (stats.dugOutBombs + stats.detonatedBombs) + ' (revealed) | ' + stats.totalBombs + ' (total)';
     }
+
+    // function showRevealedFields() {
+    //     if (!revealedFieldsLabel) {
+    //         revealedFieldsLabel = new PIXI.Text(
+    //             '',
+    //             labelHelper.getConfigForStats()
+    //         );
+
+    //         revealedFieldsLabel.x = 250;
+    //         revealedFieldsLabel.y = 550;
+
+    //         appInstance.stage.addChild(revealedFieldsLabel);
+    //     }
+        
+    //     revealedFieldsLabel.text = 'Revealed: ' + stats.emptyRevealed;
+    // }
     
     function showCredits() {
         if (!creditsLabel) {
@@ -108,7 +152,7 @@ var statHelper = function() {
                 labelHelper.getConfigForStats()
             );
 
-            creditsLabel.x = 600;
+            creditsLabel.x = 660;
             creditsLabel.y = 550;
 
             appInstance.stage.addChild(creditsLabel);
