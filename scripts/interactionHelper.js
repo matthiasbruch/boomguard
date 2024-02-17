@@ -53,6 +53,12 @@ var interactionHelper = function() {
     }
 
     function setNextMode(interaction) {
+        if (interaction) {
+            interactionMenuHelper.setButtonActive(interaction);
+        }
+        else {
+            interactionMenuHelper.setAllInactive();
+        }
         selectedInteraction = interaction;
     }
 

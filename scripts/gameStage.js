@@ -102,9 +102,12 @@ var gameStage = function() {
     }
 
     function handleTileRightClick(mapTile, mouseEvent) {
-        interactionHelper.setNextMode(null);
-
-        mapTile.toggleTileMarking();
+        if (interactionHelper.getNextMode()) {
+            interactionHelper.setNextMode(null);
+        }
+        else {
+            mapTile.toggleTileMarking();
+        }
     }
 
     function handleTileReveal(mapTile) {
