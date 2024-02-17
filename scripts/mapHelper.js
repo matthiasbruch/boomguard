@@ -153,13 +153,24 @@ var mapHelper = function() {
         for (var tileKey in tileList) {
             var loopedTile = tileList[tileKey];
 
-            addFieldIfExists(resultList, loopedTile.xPos, loopedTile.yPos - 1);
-            addFieldIfExists(resultList, loopedTile.xPos - 1, loopedTile.yPos);
-            addFieldIfExists(resultList, loopedTile.xPos + 1, loopedTile.yPos);
-            addFieldIfExists(resultList, loopedTile.xPos, loopedTile.yPos + 1);
+            addFieldIfExists(resultList, loopedTile.xPos - 1,   loopedTile.yPos - 1);
+            addFieldIfExists(resultList, loopedTile.xPos,       loopedTile.yPos - 1);
+            addFieldIfExists(resultList, loopedTile.xPos + 1,   loopedTile.yPos - 1);
+            addFieldIfExists(resultList, loopedTile.xPos - 1,   loopedTile.yPos);
+            // addFieldIfExists(resultList, loopedTile.xPos,       loopedTile.yPos);
+            addFieldIfExists(resultList, loopedTile.xPos + 1,   loopedTile.yPos);
+            addFieldIfExists(resultList, loopedTile.xPos - 1,   loopedTile.yPos + 1);
+            addFieldIfExists(resultList, loopedTile.xPos,       loopedTile.yPos + 1);
+            addFieldIfExists(resultList, loopedTile.xPos + 1,   loopedTile.yPos + 1);
         }
 
-        return {...tileList, ...resultList};
+        let addedTileKeys = getAddedTileKeys(tileList, resultList);
+        resultList = {...tileList, ...resultList}; 
+
+        return {
+            resultList: resultList,
+            groupedTiles: getGroupedTiles(addedTileKeys)
+        }
     }
 
     function addFieldIfExists(resultList, x, y) {
@@ -170,11 +181,96 @@ var mapHelper = function() {
         }
     }
 
+    function getGroupedTiles(tileKeyList) {
+        var info = {
+            'empty': [],
+            'bomb': [],
+            'number': []
+        };
+
+        for (var tileKeyIdx = 0; tileKeyIdx < tileKeyList.length; tileKeyIdx++) {
+            var tileKey = tileKeyList[tileKeyIdx];
+
+            info[map[tileKey].tileType].push(map[tileKey]);
+        }
+
+        return info;
+    }
+
+    function getAddedTileKeys(oldList, newList) {
+        var addedList = [];
+
+        for (var prop in newList) {
+            if (!oldList.hasOwnProperty(prop)) {
+                addedList.push(prop);
+            }
+        }
+
+        return addedList;
+    }
+
+    function getRandomTile() {
+        var randomX = Math.floor(Math.random() * config.columns);
+        var randomY = Math.floor(Math.random() * config.rows);
+        
+        var tileKey = randomX + '_' + randomY;
+        return map[tileKey];
+    }
+
+    function getRandomEmptyTile() {
+        let randomTile = null;
+
+        do
+        {
+            randomTile = getRandomTile();
+        }
+        while (randomTile.tileType != 'empty');
+
+        return randomTile;
+    }
+
+    function getTilesToReveal(tileList, xPos, yPos) {
+        
+        var tileKey = xPos + '_' + yPos;
+        var mapTile = map[tileKey];
+
+        if (mapTile.tileType === 'empty')
+        {
+            // If empty, discover all neighbour fields.
+            var emptyFields = mapHelper.getAttachedTilesOfType('empty', mapTile.xPos, mapTile.yPos);
+            
+            // Add the new tiles to the existing list if new ones were discovered.
+            if (getAddedTileKeys(tileList, emptyFields).length) {
+                tileList = Object.assign(tileList, emptyFields);
+                
+                // If we have new empty tiles, extend the revealed area by 1.
+                var extensionResult = mapHelper.extendByOne(emptyFields);
+                
+                // Add the extension to the summary.
+                tileList = Object.assign(tileList, extensionResult.resultList);
+
+                // If new empty tiles have been discovered... 
+                if (extensionResult.groupedTiles.empty.length) {
+                    // Do the same logic for each newly discovered empty field.
+                    for (var i = 0; i < extensionResult.groupedTiles.empty.length; i++) {
+                        var emptyTileInExtension = extensionResult.groupedTiles.empty[i];
+                        getTilesToReveal(tileList, emptyTileInExtension.xPos, emptyTileInExtension.yPos);
+                    }
+                }
+
+            }
+        }
+
+        return tileList;
+    }
+
     return {
         generateMap: generateMap,
         getBatchTiles: getBatchTiles,
         getAttachedTilesOfType: getAttachedTilesOfType,
         extendByOne: extendByOne,
-        getRowTiles: getRowTiles
+        getRowTiles: getRowTiles,
+        getRandomEmptyTile: getRandomEmptyTile,
+        getTilesToReveal: getTilesToReveal
     }
 }();

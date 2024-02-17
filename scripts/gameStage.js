@@ -61,6 +61,14 @@ var gameStage = function() {
                 appInstance.stage.addChild(map[tileKey].sprite);
             }
         }
+
+        markStartTile();
+    }
+
+    function markStartTile() {
+        var emptyTile = mapHelper.getRandomEmptyTile();
+        
+        emptyTile.markStartTile();
     }
 
     function handleTileMouseDown(mapTile, mouseEvent) {
@@ -113,8 +121,7 @@ var gameStage = function() {
             });
         }
         else if (mapTile.tileType === 'empty') {
-            var emptyFields = mapHelper.getAttachedTilesOfType('empty', mapTile.xPos, mapTile.yPos);
-            var emptyAndNumberFields = mapHelper.extendByOne(emptyFields);
+            let emptyAndNumberFields = mapHelper.getTilesToReveal({}, mapTile.xPos, mapTile.yPos);
 
             var revealedFields = 0;
             for (var tileKey in emptyAndNumberFields) {

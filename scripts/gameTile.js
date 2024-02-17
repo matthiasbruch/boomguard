@@ -44,14 +44,17 @@ var gameTile = function(mapTile, config) {
         container.addChild(skullSprite);
     }
 
-    function createLabel() {
+    function createLabel(overwriteText, overwriteColor) {
         if (textElement) {
             textElement.destroy();
             textElement = null;
         }
         
         let label = null;
-        if (mapTile.tileType == 'number') {
+        if (overwriteText) {
+            label = overwriteText;
+        }
+        else if (mapTile.tileType == 'number') {
             label = mapTile.bombCount + '';
         }
         else if (mapTile.tileType == 'bomb') {
@@ -61,7 +64,7 @@ var gameTile = function(mapTile, config) {
         if (label !== null) {
             textElement = new PIXI.Text(
                 label,
-                labelHelper.getConfigForTileLabel(labelHelper.getColorForLabel(label), true)
+                labelHelper.getConfigForTileLabel(overwriteColor ? overwriteColor : labelHelper.getColorForLabel(label), true)
             );
 
             textElement.x = config.tileWidthAndHeight / 2 - ((mapTile.tileType == 'bomb') ? 10 : 5);
@@ -181,6 +184,10 @@ var gameTile = function(mapTile, config) {
             xPos: container.x + (config.tileWidthAndHeight / 2),
             yPos: container.y + (config.tileWidthAndHeight / 2)
         }
+    }
+
+    mapTile.markStartTile = function() {
+        createLabel('X', '#000000');
     }
 
     container = new PIXI.Container();
